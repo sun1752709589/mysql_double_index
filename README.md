@@ -22,7 +22,17 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+And then execute:
+
+    $ rails c
+    #查询单个表重复&冗余索引
+    $ > MysqlDoubleIndex.db_double_index("articles")
+    #查询所有表重复&冗余索引
+    $ > MysqlDoubleIndex.db_double_index
+    #查询单个表磁盘占用大小
+    $ > MysqlDoubleIndex.db_table_size("articles")
+    #查询所有表磁盘占用大小
+    $ > MysqlDoubleIndex.db_table_size
 
 ## Development
 
@@ -38,4 +48,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/[USERN
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
