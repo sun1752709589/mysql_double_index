@@ -10,14 +10,19 @@ module MysqlDoubleIndex
   def test
   end
 
-  def db_double_index
+  def db_double_index(table = nil)
     begin
       MysqlDoubleIndex.db_connection #连接数据库
       result = {}
       double_index = []
       redundancy_index = []
-      sql="show tables"
-      tables=ActiveRecord::Base.connection.execute(sql)
+      if table.nil?
+        sql="show tables"
+        tables=ActiveRecord::Base.connection.execute(sql)
+      else
+        tables = []
+        tables << [table]
+      end
       tables.each do |item|
         tmp_hash = {}
         keys = ActiveRecord::Base.connection.execute("show index from #{item[0]}")
@@ -56,14 +61,14 @@ module MysqlDoubleIndex
         print_arr << [item]
       end
       table = Terminal::Table.new :rows => print_arr
-      puts table
+      puts table if double_index.size > 0
       print_arr = []
       print_arr << ["冗余索引"]
       redundancy_index.each do |item|
         print_arr << [item]
       end
       table = Terminal::Table.new :rows => print_arr
-      puts table
+      puts table if redundancy_index.size > 0
     rescue Exception => e
       puts e.backtrace
     ensure
