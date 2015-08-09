@@ -37,12 +37,16 @@ Or install it yourself as:
 And then execute:
 
     $ rails c
+
     #查询单个表重复&冗余索引
     $ > MysqlDoubleIndex.db_double_index("articles")
+
     #查询所有表重复&冗余索引
     $ > MysqlDoubleIndex.db_double_index
+
     #查询单个表磁盘占用大小
     $ > MysqlDoubleIndex.db_table_size("articles")
+
     #查询所有表磁盘占用大小
     $ > MysqlDoubleIndex.db_table_size
 
