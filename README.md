@@ -9,6 +9,7 @@ TODO: Delete this and the text above, and describe your gem
 Add this line to your application's Gemfile:
 
 ```ruby
+gem 'terminal-table' #ruby下类似mysql格式化输出
 gem 'mysql_double_index'
 ```
 
