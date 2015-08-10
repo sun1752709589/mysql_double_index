@@ -20,7 +20,7 @@ MySQL允许在相同列上创建多个索引，无论是有意的还是无意的
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'terminal-table' #ruby下类似mysql格式化输出
+
 gem 'mysql_double_index'
 ```
 

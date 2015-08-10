@@ -45,10 +45,10 @@ module MysqlDoubleIndex
             next if index_name_inner == index_name_outer || index_columns_inner['index_type'] != index_columns_outer['index_type'] || handled_index.include?(index_name_inner.to_s + index_name_outer.to_s) || handled_index.include?(index_name_outer.to_s + index_name_inner.to_s)
             #重复索引
             if get_index_columns_sorted(index_columns_inner['columns']) == get_index_columns_sorted(index_columns_outer['columns'])
-              double_index << "#{table}上存在重复的索引:#{index_name_outer.to_s + get_index_columns_sorted(index_columns_outer['columns'],true)}&#{index_name_inner.to_s + get_index_columns_sorted(index_columns_inner['columns'],true)}"
+              double_index << "#{table}上存在重复的索引:【#{index_name_outer.to_s + get_index_columns_sorted(index_columns_outer['columns'],true)}】&【#{index_name_inner.to_s + get_index_columns_sorted(index_columns_inner['columns'],true)}】"
             elsif has_redundancy_index?(index_columns_inner['columns'],index_columns_outer['columns'])
               #冗余索引
-              redundancy_index << "#{table}上存在冗余的索引:#{index_name_outer.to_s + get_index_columns_sorted(index_columns_outer['columns'],true)}&#{index_name_inner.to_s + get_index_columns_sorted(index_columns_inner['columns'],true)}"
+              redundancy_index << "#{table}上存在冗余的索引:【#{index_name_outer.to_s + get_index_columns_sorted(index_columns_outer['columns'],true)}】&【#{index_name_inner.to_s + get_index_columns_sorted(index_columns_inner['columns'],true)}】"
             end
             handled_index << index_name_inner.to_s + index_name_outer.to_s
           end
@@ -56,23 +56,30 @@ module MysqlDoubleIndex
         handled_index = []
       end
       print_arr = []
-      print_arr << ["重复索引"]
       double_index.each do |item|
         print_arr << [item]
       end
-      table = Terminal::Table.new :rows => print_arr
+      table = Terminal::Table.new :title => "重复索引", :rows => print_arr
       puts table if double_index.size > 0
+      if double_index.size < 1
+        table = Terminal::Table.new :title => "暂无检索到重复索引"
+        puts table
+      end
+
       print_arr = []
-      print_arr << ["冗余索引"]
       redundancy_index.each do |item|
         print_arr << [item]
       end
-      table = Terminal::Table.new :rows => print_arr
+      table = Terminal::Table.new :title => "冗余索引", :rows => print_arr
       puts table if redundancy_index.size > 0
+      if redundancy_index.size < 1
+        table = Terminal::Table.new :title => "暂无检索到冗余索引"
+        puts table
+      end
     rescue Exception => e
       puts e.backtrace
     ensure
-      db_close #释放链接
+      MysqlDoubleIndex.db_close #释放链接
     end
   end
 
@@ -90,8 +97,7 @@ module MysqlDoubleIndex
         sql = "select TABLE_NAME,ENGINE,TABLE_ROWS,AVG_ROW_LENGTH,DATA_LENGTH,INDEX_LENGTH,(DATA_LENGTH+INDEX_LENGTH) as TABLE_LENGTH,CREATE_TIME from information_schema.tables where table_schema = '#{database}' and table_name = '#{table}'"
       end
       tables = ActiveRecord::Base.connection.execute(sql)
-      head = ["TABLE_NAME","ENGINE","TABLE_ROWS","AVG_ROW_LENGTH","DATA_LENGTH","INDEX_LENGTH","SUM_LENGTH","CREATE_TIME"]
-      print_arr << head
+      head = ["table name","engine","table rows","average row length","data length","index length","sum lemgth","create time"]
       tables.each do |item|
         item.each_with_index do |data,index|
           if [4,5,6].include?(index)
@@ -103,13 +109,13 @@ module MysqlDoubleIndex
         end
         print_arr << item
       end
-      table = Terminal::Table.new :rows => print_arr
+      table = Terminal::Table.new :title => "表占用磁盘详情", :headings => head, :rows => print_arr
       puts table
     rescue Exception => e
     ensure
       sql="use #{database}"
       ActiveRecord::Base.connection.execute(sql)
-      db_close #释放链接
+      MysqlDoubleIndex.db_close #释放链接
     end
   end
 
@@ -128,11 +134,7 @@ module MysqlDoubleIndex
       return "#{(byte/(1024**4)).round(2)}TB"
     end
   end
-  def db_close
-    if ActiveRecord::Base.connection && ActiveRecord::Base.connection.active?
-      ActiveRecord::Base.connection.close
-    end
-  end
+
   def get_index_columns_sorted(columns, sub_part = false)
     if sub_part
       '(' + columns.join(',') + ')'

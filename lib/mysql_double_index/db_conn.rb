@@ -9,4 +9,9 @@ module MysqlDoubleIndex
     dbconfig = YAML::load(MysqlDoubleIndex.load_config)
     ActiveRecord::Base.establish_connection(dbconfig[Rails::env.to_s])
   end
+  def db_close
+    if ActiveRecord::Base.connection && ActiveRecord::Base.connection.active?
+      ActiveRecord::Base.connection.close
+    end
+  end
 end

@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{查找mysql数据库中重复和冗余索引}
   spec.description   = %q{查找mysql数据库中重复和冗余索引}
-  spec.homepage      = "https://github.com/sun1752709589"
+  spec.homepage      = "https://github.com/sun1752709589/mysql_double_index"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
@@ -27,11 +27,11 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib","lib/mysql_double_index"]
 
-  spec.add_development_dependency "rspec", "~> 3.2"
-  spec.add_development_dependency "bundler", "~> 1.10"
-  spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "activerecord", "~> 4.2"
-  spec.add_development_dependency "terminal-table", "~> 1.5"
-  spec.add_development_dependency "mysql2", "~> 0.3"
-  spec.add_development_dependency "rails", "~> 4.2"
+  spec.add_dependency "rspec", "~> 3.2"
+  spec.add_dependency "bundler", "~> 1.10"
+  spec.add_dependency "rake", "~> 10.0"
+  spec.add_dependency "activerecord"
+  spec.add_dependency "terminal-table"
+  spec.add_dependency "mysql2", "~> 0.3"
+  spec.add_dependency "rails"
 end
